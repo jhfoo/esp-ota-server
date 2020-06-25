@@ -1,0 +1,23 @@
+{
+  "name": "esp-ota-server",
+  "version": "1.0.0",
+  "description": "Host and manage your ESP IoT server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhfoo/esp-ota-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jhfoo/esp-ota-server/issues"
+  },
+  "homepage": "https://github.com/jhfoo/esp-ota-server#readme",
+  "dependencies": {
+    "@vue/cli": "^4.4.6"
+  }
+}
