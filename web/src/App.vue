@@ -13,21 +13,21 @@
     </v-app-bar>
 
     <v-main>
-      <HelloWorld/>
+      <router-view></router-view>
     </v-main>
   </v-app>
 </template>
 
 <script>
 import { mapGetters} from 'vuex'
-import HelloWorld from './components/HelloWorld'
+// import HelloWorld from './components/HelloWorld'
 import constants from './constants'
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    // HelloWorld,
   },
 
   data: () => ({

@@ -8,7 +8,7 @@ import constants from './constants'
 
 Vue.config.productionTip = false
 
-const io = socketio('http://192.168.1.243:8088')
+const io = socketio(constants.SocketIoService.HOST + ':' + constants.SocketIoService.PORT)
 
 io.on('connect',()=> {
   console.log('Connected')
