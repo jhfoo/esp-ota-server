@@ -6,13 +6,15 @@
       <thead>
         <tr>
           <th class="text-left">Id</th>
-          <th class="text-left">Name</th>
+          <th class="text-left">Last Known Ip</th>
+          <th class="text-left">Last Ping</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="item in devices" :key="item.id">
           <td>{{ item.id }}</td>
-          <td>{{ item.id }}</td>
+          <td>{{ item.LastKnownIp }}</td>
+          <td>{{ item.LastPing ? item.LastPing : 'NA'}}</td>
         </tr>
       </tbody>
     </template>

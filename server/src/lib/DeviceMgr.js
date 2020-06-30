@@ -5,6 +5,23 @@ class DeviceMgr {
 
     }
 
+    createTable() {
+        return new Promise((resolve, reject) => {
+            DefaultDb.run('create table if not exists devices ('
+            + 'id string primary key,'
+            + 'LastKnownIp string,'
+            + 'FreeStorageKB integer,'
+            + 'LastPing datetime'
+            + ')', (err) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve()
+                }
+            })
+        })
+    }
+
     getDevices(filter) {
         return new Promise((resolve, reject) => {
             DefaultDb.all('select * from devices', (err, result) => {
@@ -17,6 +34,33 @@ class DeviceMgr {
                     result = []
                 }
                 resolve(result)
+            })
+        })
+    }
+
+    clearTable() { 
+        return new Promise((resolve, reject) => {
+            DefaultDb.run('drop table devices',async (err) => {
+                if (err) {
+                    console.error(err)
+                    reject(err)
+                } else {
+                    await this.createTable()
+                    resolve()
+                }
+            })
+        })
+    }
+
+    cleanTable() { 
+        return new Promise((resolve, reject) => {
+            DefaultDb.run('delete from devices where id is null', (err) => {
+                if (err) {
+                    console.error(err)
+                    reject(err)
+                } else {
+                    resolve()
+                }
             })
         })
     }
@@ -38,12 +82,15 @@ class DeviceMgr {
         })
     }
     
-    registerDevice(DeviceId) {
-        console.log(DeviceId)
-        console.log(DefaultDb)
+    registerDevice(DeviceRec) {
+        if (!DeviceRec.id) {
+            return reject('[registerDevice] Missing id in param')
+        }
+
         return new Promise((resolve, reject) => {
-            DefaultDb.run('insert into devices (id, LastKnownIp) values (?,?)',
-            DeviceId, '', (err) => {
+            DefaultDb.run('insert into devices (id, LastKnownIp, LastPing) values (?,?,?)',
+            DeviceRec.id, DeviceRec.LastKnownIp, 
+            DeviceRec.LastPing, (err) => {
                 if (err) {
                     reject(err)
                 } else {

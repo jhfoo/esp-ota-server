@@ -1,5 +1,6 @@
 const Router = require('restify-router').Router,
     router = new Router(),
+    // requestIp = require('request-ip'),
     errors = require('restify-errors'),
     sqlite3 = require('sqlite3').verbose(),
     db = new sqlite3.Database('db/main.db', sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE),
@@ -45,11 +46,30 @@ function createDbTable(db, TableName) {
     console.log('Creating table %s', TableName)
     switch (TableName) {
         case 'devices':
-            db.run('create table if not exists devices ('
-                + 'id string primary key,'
-                + 'LastKnownIp string'
-                + ')')
+            DeviceMgr.createTable()
             break
+    }
+}
+
+router.get('/clear', clearDevices)
+function clearDevices(req, res, next) {
+    try {
+        DeviceMgr.clearTable()
+        res.send('OK')
+        next()
+    } catch (err) {
+        next(new errors.NotFoundError(err.message))
+    }
+}
+
+router.get('/clean', cleanDevices)
+function cleanDevices(req, res, next) {
+    try {
+        DeviceMgr.cleanTable()
+        res.send('OK')
+        next()
+    } catch (err) {
+        next(new errors.NotFoundError(err.message))
     }
 }
 
@@ -76,7 +96,11 @@ async function registerDevice(req, res, next) {
     }
 
     try {
-        await DeviceMgr.registerDevice(req.params.DeviceId) 
+        await DeviceMgr.registerDevice({
+            id: req.params.DeviceId,
+            LastKnownIp: req.connection.remoteAddress,
+            LastPing: Math.floor(Date.now()/ 1000)
+        }) 
         res.send(req.params.DeviceId)
         next()
     } catch (err) {
