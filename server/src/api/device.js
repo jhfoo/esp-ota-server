@@ -5,9 +5,12 @@ const Router = require('restify-router').Router,
     sqlite3 = require('sqlite3').verbose(),
     db = new sqlite3.Database('db/main.db', sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE),
     DeviceMgrClass = require('../lib/DeviceMgr'),
-    DeviceMgr = DeviceMgrClass.singleton
+    DeviceMgr = DeviceMgrClass.singleton,
+    DeviceGroupMgrClass = require('../lib/DeviceGroupMgr'),
+    DeviceGroupMgr = DeviceGroupMgrClass.singleton
 
 DeviceMgrClass.setDefaultDatabase(db)
+DeviceGroupMgrClass.setDefaultDatabase(db)
 console.log(DeviceMgrClass.getDefaultDatabase())
 
 async function initDatabase() {
@@ -85,10 +88,11 @@ async function listDevices(req, res, next) {
 
 }
 
-router.get('/register/:DeviceId/:DeviceToken', registerDevice)
+router.post('/register', registerDevice)
 async function registerDevice(req, res, next) {
-    if (req.params.DeviceToken !== 'def') {
-        return next(new errors.NotFoundError('Invalid device token'))
+    let group = DeviceGroupMgr.getById(req.params.id)
+    if (!group) {
+        return next(new errors.NotFoundError('Invalid group token'))
     } 
 
     if (await DeviceMgr.isDeviceIdExist(req.params.DeviceId)) {
@@ -99,6 +103,8 @@ async function registerDevice(req, res, next) {
         await DeviceMgr.registerDevice({
             id: req.params.DeviceId,
             LastKnownIp: req.connection.remoteAddress,
+            FreeStorageKB: req.params.FreeStorageKB,
+            DeviceGroupId: group.id,
             LastPing: Math.floor(Date.now()/ 1000)
         }) 
         res.send(req.params.DeviceId)

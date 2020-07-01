@@ -11,6 +11,7 @@ class DeviceMgr {
             + 'id string primary key,'
             + 'LastKnownIp string,'
             + 'FreeStorageKB integer,'
+            + 'DeviceGroupId string,'
             + 'LastPing datetime'
             + ')', (err) => {
                 if (err) {
@@ -88,9 +89,13 @@ class DeviceMgr {
         }
 
         return new Promise((resolve, reject) => {
-            DefaultDb.run('insert into devices (id, LastKnownIp, LastPing) values (?,?,?)',
+            DefaultDb.run('insert into devices (id, LastKnownIp'
+            + ', LastPing, FreeStorageKB'
+            + ', DeviceGroupId'
+            + ') values (?,?,?,?,?)',
             DeviceRec.id, DeviceRec.LastKnownIp, 
-            DeviceRec.LastPing, (err) => {
+            DeviceRec.LastPing, DeviceRec.FreeStorageKB,
+            DeviceRec.DeviceGroupId, (err) => {
                 if (err) {
                     reject(err)
                 } else {

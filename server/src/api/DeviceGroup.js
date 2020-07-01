@@ -1,4 +1,5 @@
-const Router = require('restify-router').Router,
+const md5 = require('md5'),
+    Router = require('restify-router').Router,
     router = new Router(),
     // requestIp = require('request-ip'),
     errors = require('restify-errors'),
@@ -89,7 +90,7 @@ router.post('/create', createGroup)
 async function createGroup(req, res, next) {
     console.log(req.body)
     if (req.body.ApiToken !== 'def') {
-        return next(new errors.NotFoundError('Invalid group token'))
+        return next(new errors.NotFoundError('Invalid API token'))
     } 
 
     if (await DeviceGroupMgr.isGroupIdExist(req.body.id)) {
@@ -100,7 +101,7 @@ async function createGroup(req, res, next) {
         await DeviceGroupMgr.create({
             id: req.body.id,
             name: req.body.name,
-            GroupToken: req.body.GroupToken
+            GroupToken: md5((new Date()).getTime())
         }) 
         res.send(req.body.id)
         next()

@@ -1,16 +1,18 @@
 <template>
   <div>
+    Devices in the same Device Group receive the same software updates. They should in most cases 
+    belong to the same hardware and configuration.
     <v-toolbar dense flat>
       <v-toolbar-title>Device Groups</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon>
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
-      <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
+      <v-btn @click="updateList" color="green" text>
+        <v-icon>mdi-refresh</v-icon> Refresh
       </v-btn>
-      <v-btn icon>
-        <v-icon>mdi-dots-vertical</v-icon>
+      <v-btn text color="red">
+        <v-icon>mdi-nuke</v-icon> Reset
       </v-btn>
     </v-toolbar>
 
@@ -45,16 +47,22 @@ export default {
     devices: []
   }),
   mounted() {
-    axios.get(constants.SocketIoService.HOST + ':' + constants.SocketIoService.PORT + '/api/devicegroup/list')
-    .then((resp) => {
-      console.log(resp.data)
-      this.devices = resp.data
-    }).catch ((err) => {
-      console.error(err)
-    })
+    this.updateList()
   },
   computed: {
     ...mapGetters(['SocketIoStatus']),
+  },
+  methods: {
+    updateList() {
+      this.devices = []
+      axios.get(constants.SocketIoService.HOST + ':' + constants.SocketIoService.PORT + '/api/devicegroup/list')
+      .then((resp) => {
+        console.log(resp.data)
+        this.devices = resp.data
+      }).catch ((err) => {
+        console.error(err)
+      })
+    }
   },
   watch: {
     SocketIoStatus(NewValue, OldValue) {

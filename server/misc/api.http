@@ -1,6 +1,13 @@
 @BaseUrl = http://192.168.1.236:8088
-GET {{BaseUrl}}/api/device/register/abc/def HTTP/1.1
+@GroupToken = df67b4ee1f0c54103ae61e79fea8391c
+POST {{BaseUrl}}/api/device/register HTTP/1.1
 
+{
+    "id": "abc",
+    "name": "non-existent device",
+    "FreeStorageKB": 768,
+    "GroupToken": {{GroupToken}}
+}
 ###
 
 GET {{BaseUrl}}/api/devicegroup/list HTTP/1.1
@@ -11,10 +18,18 @@ Content-Type: application/json
 
 {
     "id": "abc",
-    "GroupToken": "def",
     "name": "default group",
     "ApiToken": "def"
 }
 
 ###
 GET {{BaseUrl}}/api/devicegroup/clear HTTP/1.1
+
+###
+POST {{BaseUrl}}/api/devicegroup/create HTTP/1.1
+
+{
+    "id": "default",
+    "name": "Default group",
+    "ApiToken": "def"
+}

@@ -38,6 +38,20 @@ class DeviceGroupMgr {
         })
     }
 
+    getById(GroupId) {
+        return new Promise((resolve, reject) => {
+            DefaultDb.get('select * from devicegroups where id = ?',
+                GroupId, (err, record) => {
+                if (err) {
+                    console.error(err)
+                    reject(err)
+                } else {
+                    resolve(record)
+                }
+            })
+        })
+    }
+
     clearTable() { 
         return new Promise((resolve, reject) => {
             DefaultDb.run('drop table devicegroups',async (err) => {
