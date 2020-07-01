@@ -21,7 +21,12 @@ Vue.use(VueRouter)
     path: '/devices',
     name: 'devices',
     component: () => import(/* webpackChunkName: "devices" */ '../views/Devices.vue')
-  }
+  }, 
+  // {
+  //   path: '/devicegroups',
+  //   name: 'devicegroups',
+  //   component: () => import(/* webpackChunkName: "devices" */ '../views/DeviceGroups.vue')
+  // }
 ]
 
 const router = new VueRouter({

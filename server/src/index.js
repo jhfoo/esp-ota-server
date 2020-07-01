@@ -15,6 +15,9 @@ const cors = corsM({
 
 server.pre(cors.preflight)
 server.use(cors.actual)
+server.use(restify.plugins.bodyParser({
+    rejectUnknown: true,
+ }))
 
 apis.applyRoutes(server, '/api')
 

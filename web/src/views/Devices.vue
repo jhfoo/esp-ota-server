@@ -1,44 +1,40 @@
 <template>
   <div>
-    <h1>Registered Devices</h1>
-    <v-simple-table>
-    <template v-slot:default>
-      <thead>
-        <tr>
-          <th class="text-left">Id</th>
-          <th class="text-left">Last Known Ip</th>
-          <th class="text-left">Last Ping</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in devices" :key="item.id">
-          <td>{{ item.id }}</td>
-          <td>{{ item.LastKnownIp }}</td>
-          <td>{{ item.LastPing ? item.LastPing : 'NA'}}</td>
-        </tr>
-      </tbody>
-    </template>
-  </v-simple-table>
+    <v-tabs v-model="ActiveTab" background-color="blue-grey lighten-4" centered>
+      <v-tab v-for="name in TabNames" v-bind:key="name">{{ name }}</v-tab>
+    </v-tabs>
+    <v-tabs-items v-model="ActiveTab">
+      <v-tab-item>
+        <DeviceList/>
+      </v-tab-item>
+      <v-tab-item>
+        <v-lazy>
+          <DeviceGroupList/>
+        </v-lazy>
+      </v-tab-item>
+      <v-tab-item>
+        3
+      </v-tab-item>
+    </v-tabs-items>
   </div>
 </template>
 
 <script>
 import { mapGetters} from 'vuex'
 import constants from '../constants'
-import axios from 'axios'
+import DeviceList from '../components/DeviceList'
+import DeviceGroupList from '../components/DeviceGroupList'
 
 export default {
+  components: {
+    DeviceList,
+    DeviceGroupList
+  },
   data: () => ({
-    devices: []
+    TabNames: ['Devices', 'Device Groups', 'Policies'],
+    ActiveTab: null
   }),
   mounted() {
-    axios.get(constants.SocketIoService.HOST + ':' + constants.SocketIoService.PORT + '/api/device/list')
-    .then((resp) => {
-      console.log(resp.data)
-      this.devices = resp.data
-    }).catch ((err) => {
-      console.error(err)
-    })
   },
   computed: {
     ...mapGetters(['SocketIoStatus']),
