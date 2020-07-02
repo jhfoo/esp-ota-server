@@ -1,12 +1,13 @@
 @BaseUrl = http://192.168.1.236:8088
 @GroupToken = df67b4ee1f0c54103ae61e79fea8391c
 POST {{BaseUrl}}/api/device/register HTTP/1.1
+Content-Type: application/json
 
 {
     "id": "abc",
     "name": "non-existent device",
     "FreeStorageKB": 768,
-    "GroupToken": {{GroupToken}}
+    "GroupToken": "{{GroupToken}}"
 }
 ###
 

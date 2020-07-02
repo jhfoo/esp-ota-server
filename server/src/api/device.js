@@ -90,28 +90,38 @@ async function listDevices(req, res, next) {
 
 router.post('/register', registerDevice)
 async function registerDevice(req, res, next) {
-    let group = DeviceGroupMgr.getById(req.params.id)
+    let group = await DeviceGroupMgr.getByToken(req.body.GroupToken)
     if (!group) {
         return next(new errors.NotFoundError('Invalid group token'))
     } 
 
-    if (await DeviceMgr.isDeviceIdExist(req.params.DeviceId)) {
-        return next(new errors.NotFoundError('DeviceId already registered'))
-    }
-
     try {
-        await DeviceMgr.registerDevice({
-            id: req.params.DeviceId,
-            LastKnownIp: req.connection.remoteAddress,
-            FreeStorageKB: req.params.FreeStorageKB,
-            DeviceGroupId: group.id,
-            LastPing: Math.floor(Date.now()/ 1000)
-        }) 
+        if (await DeviceMgr.isDeviceIdExist(req.body.id)) {
+            await DeviceMgr.update({
+                id: req.body.id,
+                LastKnownIp: req.connection.remoteAddress,
+                FreeStorageKB: 'FreeStorageKB' in req.body ? req.body.FreeStorageKB : -1,
+                LastPing: Math.floor(Date.now()/ 1000)
+            })
+        } else {
+            await DeviceMgr.registerDevice({
+                id: req.params.DeviceId,
+                LastKnownIp: req.connection.remoteAddress,
+                FreeStorageKB: req.params.FreeStorageKB,
+                DeviceGroupId: group.id,
+                LastPing: Math.floor(Date.now()/ 1000)
+            }) 
+        }
+    
         res.send(req.params.DeviceId)
         next()
     } catch (err) {
         console.error(err)
-        return next(new errors.NotFoundError(err.message))
+        if (typeof err === 'string') {
+            return next(new errors.NotFoundError(err))
+        } else {
+            return next(new errors.NotFoundError(err.message))
+        }
     }
 }
 

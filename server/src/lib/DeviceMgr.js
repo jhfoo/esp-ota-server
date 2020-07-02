@@ -82,13 +82,35 @@ class DeviceMgr {
             })
         })
     }
-    
-    registerDevice(DeviceRec) {
-        if (!DeviceRec.id) {
-            return reject('[registerDevice] Missing id in param')
-        }
 
+    update(DeviceRec) {
         return new Promise((resolve, reject) => {
+            if (!DeviceRec.id) {
+                return reject('[update] Missing id in param')
+            }
+    
+            DefaultDb.run('update devices set LastKnownIp = ?'
+            + ', FreeStorageKB = ?'
+            + ', LastPing = ?'
+            + 'where id = ?',
+            DeviceRec.LastKnownIp, DeviceRec.FreeStorageKB,
+            DeviceRec.LastPing, DeviceRec.id, 
+            (err) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve()
+                }
+            })
+        })
+    }
+
+    registerDevice(DeviceRec) {
+        return new Promise((resolve, reject) => {
+            if (!DeviceRec.id) {
+                return reject('[registerDevice] Missing id in param')
+            }
+    
             DefaultDb.run('insert into devices (id, LastKnownIp'
             + ', LastPing, FreeStorageKB'
             + ', DeviceGroupId'

@@ -23,6 +23,8 @@
             <th class="text-left">Id</th>
             <th class="text-left">Last Known Ip</th>
             <th class="text-left">Last Ping</th>
+            <th class="text-left">Free Storage</th>
+            <th class="text-left">Device Group</th>
           </tr>
         </thead>
         <tbody>
@@ -30,6 +32,8 @@
             <td>{{ item.id }}</td>
             <td>{{ item.LastKnownIp }}</td>
             <td>{{ item.LastPing ? item.LastPing : 'NA'}}</td>
+            <td>{{ item.FreeStorageKB }}</td>
+            <td>{{ item.DeviceGroupId }}</td>
           </tr>
         </tbody>
       </template>

@@ -38,6 +38,20 @@ class DeviceGroupMgr {
         })
     }
 
+    getByToken(GroupToken) {
+        return new Promise((resolve, reject) => {
+            DefaultDb.get('select * from devicegroups where GroupToken = ?',
+                GroupToken, (err, record) => {
+                if (err) {
+                    console.error(err)
+                    reject(err)
+                } else {
+                    resolve(record)
+                }
+            })
+        })
+    }
+
     getById(GroupId) {
         return new Promise((resolve, reject) => {
             DefaultDb.get('select * from devicegroups where id = ?',
