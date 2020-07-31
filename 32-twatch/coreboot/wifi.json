@@ -1,0 +1,6 @@
+{
+    "ssid": "GrandpaFoo",
+    "pwd": "62573969",
+    "timeout": 10000,
+    "registry": "http://esp-ota.kungfoo.info"
+}
