@@ -1,14 +1,16 @@
-from machine import Pin, SPI
+from machine import Pin, SPI, I2C
 import axp202c
 import st7789
+import lib.focaltouch as focaltouch
 
 # global
 tft = None
 spi = None
 axp = None
+touch = None
 
 def main():
-    global tft, spi, axp
+    global tft, spi, axp, touch
     
     # try:
     # Turn power on display power
@@ -37,6 +39,10 @@ def main():
     # enable display
     tft.init()
     tft.fill(st7789.BLACK)
+
+    # init touch
+    TouchI2c = I2C(scl=Pin(32), sda=Pin(23))
+    touch = focaltouch.FocalTouch(TouchI2c)
 
     # finally:
     #     # shutdown spi
