@@ -2,12 +2,25 @@ from machine import Pin, SPI, I2C
 import axp202c
 import st7789
 import lib.focaltouch as focaltouch
+import bma423
 
 # global
 tft = None
 spi = None
 axp = None
 touch = None
+bma = None
+
+def initBma():
+    i2c =I2C(scl=Pin(32), sda=Pin(23))
+    print (bma423)
+    bma423.init(i2c)
+
+def initTouch():
+    global touch
+    i2c = I2C(scl=Pin(32), sda=Pin(23))
+    touch = focaltouch.FocalTouch(i2c)
+
 
 def main():
     global tft, spi, axp, touch
@@ -40,10 +53,8 @@ def main():
     tft.init()
     tft.fill(st7789.BLACK)
 
-    # init touch
-    TouchI2c = I2C(scl=Pin(32), sda=Pin(23))
-    touch = focaltouch.FocalTouch(TouchI2c)
-
+    initTouch()
+    # initBma()
     # finally:
     #     # shutdown spi
     #     spi.deinit()

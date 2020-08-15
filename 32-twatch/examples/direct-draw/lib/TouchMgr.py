@@ -1,5 +1,6 @@
 from machine import Timer
 import axp202c
+import math
 
 class TouchMgr():
     def __init__(self, driver, TimerId = 3, IsRotate = True, IsStopOnMatch = True, TimerInterval = 100, axp = None, IdleTimeout = 10 * 1000):
@@ -16,6 +17,8 @@ class TouchMgr():
         self.axp = axp
         self.LastX = None
         self.LastY = None
+        self.StartX = None
+        self.StartY = None
         self.LastTouchZone = None
         self.StopMonitor = False
         self.IsScreenPowerOn = True
@@ -52,6 +55,10 @@ class TouchMgr():
                     self.axp.enablePower(axp202c.AXP202_LDO2)
             self.IdleCounter = 0
 
+            if self.StartX == None:
+                self.StartX = self.TouchDriver.touches[0]['x']
+                self.StartY = self.TouchDriver.touches[0]['y']
+
             if self.IsRotate == True:
                 FinalX = self.ScreenWidth - self.TouchDriver.touches[0]['x']
                 FinalY = self.ScreenHeight - self.TouchDriver.touches[0]['y']
@@ -63,7 +70,6 @@ class TouchMgr():
                 # debounce same coord
                 self.LastX = FinalX
                 self.LastY = FinalY
-                print ('Touched: {}, {}'.format(FinalX, FinalY))
                 self.LastTouchZone = self.getTouchedZone(FinalX, FinalY)
         else:
             # callback when touch released
@@ -74,6 +80,31 @@ class TouchMgr():
 
                 self.LastTouchZone['cb']()
                 self.LastTouchZone = None
+            elif self.StartX != None:
+                # simple gesture detection
+                # a gesture must exceed X distance
+                width = self.StartX - self.TouchDriver.touches[0]['x']
+                height = self.StartY - self.TouchDriver.touches[0]['y']
+                distance = math.sqrt(width ** 2 + height ** 2)
+
+                if abs(width) > abs(height):
+                    if distance > 60:
+                        if width > 0:
+                            print ('Swipe right')
+                        else:
+                            print ('Swipe left')
+                else:
+                    if distance > 30:
+                        if height > 0:
+                            print ('Swipe bottom')
+                        else:
+                            print ('Swipe top')
+
+                print ('From {}, {} to {}, {}: width = {}, height = {}'.format(self.StartX, self.StartY, self.LastX, self.LastY, width, height))
+                print ('Distance: {}'.format(math.floor(distance)))
+
+                self.StartX = None
+                self.StartY = None
             else:
                 # nothing happened
                 if self.IdleCounter < self.IdleTimeout:
